@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgroGrant Dashboard | Tarım & Hayvancılık Destek-Hibe Takip Platformu</title>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN (Zero-Cost / Rapid UI Prototyping) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            google: {
+              blue: '#1a73e8',
+              blueHover: '#174ea6',
+              blueLight: '#e8f0fe',
+              green: '#1e8e3e',
+              greenLight: '#e6f4ea',
+              orange: '#e37400',
+              orangeLight: '#fef7e0',
+              red: '#d93025',
+              redLight: '#fce8e6',
+              purple: '#8430ce',
+              purpleLight: '#f3e8fd',
+              grayBg: '#f8f9fa',
+              border: '#dadce0',
+              borderLight: '#e8eaed',
+              text: '#202124',
+              secondary: '#5f6368',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen flex flex-col bg-[#f8f9fa] text-[#202124]">
+
+  <!-- TOP APP BAR / HEADER -->
+  <header class="sticky top-0 z-30 bg-white border-b border-gray-200 px-4 lg:px-6 py-2.5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <!-- Mobile Hamburger Button -->
+      <button id="btn-mobile-menu" class="lg:hidden p-1.5 rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+
+      <!-- Logo & Branding -->
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+          </svg>
+        </div>
+        <div>
+          <span class="text-base font-bold text-gray-900 tracking-tight flex items-center gap-1.5">
+            AgroGrant <span class="text-xs px-1.5 py-0.2 font-semibold bg-emerald-100 text-emerald-800 rounded">v1.0 MVP</span>
+          </span>
+          <span class="hidden sm:block text-[11px] text-gray-500 font-medium">Tarım & Hayvancılık Destek-Hibe İstihbarat Platformu</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Search & Actions -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Search Input in Header -->
+      <div class="relative hidden md:block w-72 lg:w-96">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </span>
+        <input 
+          id="search-input" 
+          type="text" 
+          placeholder="Hibe adı, sektör, ekipman veya il ara..." 
+          class="w-full pl-9 pr-4 py-1.5 text-xs bg-gray-100 hover:bg-gray-200/70 focus:bg-white focus:ring-2 focus:ring-blue-500 rounded-lg border-0 transition text-gray-800 placeholder-gray-500 focus:outline-none">
+      </div>
+
+      <!-- Settings / AI Provider Config Button -->
+      <button 
+        id="btn-open-settings" 
+        title="Yapay Zeka ve Sistem Ayarları"
+        class="p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition border border-gray-200">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+      </button>
+
+      <!-- Global AI Assistant Trigger Button -->
+      <button 
+        onclick="window.appOpenAi(null)" 
+        class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+        <span class="hidden sm:inline">AI Hibe Danışmanı</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER (SIDEBAR + CONTENT) -->
+  <div class="flex-1 flex overflow-hidden">
+
+    <!-- SIDEBAR OVERLAY (Mobile) -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/40 z-20 hidden lg:hidden"></div>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-20 w-64 bg-white border-r border-gray-200 flex flex-col justify-between transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-in-out">
+      <div class="p-4">
+        <!-- Main Nav Menu -->
+        <div class="space-y-1">
+          <a href="#" data-nav-view="all" class="flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg bg-blue-50 text-blue-700 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+            Tüm Çağrılar
+          </a>
+
+          <a href="#" data-nav-view="closing" class="flex items-center gap-3 px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 rounded-lg transition">
+            <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Süresi Dolacaklar
+            <span class="ml-auto px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-amber-100 text-amber-800">2</span>
+          </a>
+
+          <a href="#" data-nav-view="dshd" class="flex items-center gap-3 px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 rounded-lg transition">
+            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            DSHD Raporları
+          </a>
+
+          <a href="#" data-nav-view="sources" class="flex items-center gap-3 px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 rounded-lg transition">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+            </svg>
+            Kaynaklar & Scraper
+            <span class="ml-auto w-2 h-2 rounded-full bg-emerald-500"></span>
+          </a>
+        </div>
+
+        <!-- Quick Summary Box -->
+        <div class="mt-8 p-3 rounded-xl bg-blue-50/70 border border-blue-100">
+          <div class="text-[11px] font-bold text-blue-900 mb-1 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+            DSHD Denetim Modülü
+          </div>
+          <p class="text-[11px] text-blue-800 leading-snug">
+            Tüm hibe çağrıları Ziraat Odaları ve Hukuk şartnameleriyle otomatik çapraz taranır.
+          </p>
+        </div>
+      </div>
+
+      <!-- Footer Info in Sidebar -->
+      <div class="p-4 border-t border-gray-100 text-[11px] text-gray-500">
+        <div class="flex items-center justify-between mb-1">
+          <span>AI Modeli:</span>
+          <span id="ai-active-provider-badge" class="font-semibold text-gray-800">Mock AI</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span>Veri Deposu:</span>
+          <span class="font-semibold text-emerald-600">Yerel SQLite / JSON</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT VIEWPORT -->
+    <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+      
+      <!-- Top Title & Stats Banner -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <h1 id="page-title" class="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
+            Tüm Hibe & Destek Çağrıları
+          </h1>
+          <p id="page-subtitle" class="text-xs text-gray-500 mt-0.5">
+            Ulusal ve uluslararası tarım, hayvancılık ve kırsal kalkınma çağrıları
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="grants-count" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-white border border-gray-200 text-gray-700 shadow-sm">
+            Yükleniyor...
+          </span>
+        </div>
+      </div>
+
+      <!-- VIEW 1: GRANTS VIEW (Default) -->
+      <div id="grants-view">
+        <!-- FILTER BAR -->
+        <div class="google-card p-4 mb-6">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            
+            <!-- Status Pills -->
+            <div class="flex items-center flex-wrap gap-1.5">
+              <button data-status-filter="all" class="px-3 py-1.5 text-xs rounded-full border border-blue-300 bg-blue-50 text-blue-700 font-medium transition cursor-pointer">
+                Tüm Durumlar
+              </button>
+              <button data-status-filter="active" class="px-3 py-1.5 text-xs rounded-full border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 transition cursor-pointer">
+                Aktif Başvuru
+              </button>
+              <button data-status-filter="closing_soon" class="px-3 py-1.5 text-xs rounded-full border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 transition cursor-pointer">
+                Süresi Dolmak Üzere
+              </button>
+              <button data-status-filter="upcoming" class="px-3 py-1.5 text-xs rounded-full border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 transition cursor-pointer">
+                Açılması Beklenen
+              </button>
+              <button data-status-filter="expired" class="px-3 py-1.5 text-xs rounded-full border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 transition cursor-pointer">
+                Sona Ermiş
+              </button>
+            </div>
+
+            <!-- Dropdown Selectors -->
+            <div class="flex items-center flex-wrap gap-2.5">
+              <!-- Agency Select -->
+              <select id="filter-agency" class="text-xs py-1.5 px-3 rounded-lg border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="all">Tüm Kurumlar</option>
+                <option value="tkdk">TKDK / IPARD</option>
+                <option value="tarim">Tarım ve Orman Bakanlığı</option>
+                <option value="ab">Avrupa Komisyonu (AB)</option>
+                <option value="fao">FAO & BM</option>
+              </select>
+
+              <!-- Category Select -->
+              <select id="filter-category" class="text-xs py-1.5 px-3 rounded-lg border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="all">Tüm Sektörler</option>
+              </select>
+
+              <!-- Reset Button -->
+              <button id="btn-reset-filters" class="p-1.5 text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition" title="Filtreleri Sıfırla">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- GRANTS GRID -->
+        <div id="grants-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- Dynamically Rendered by js/app.js -->
+        </div>
+      </div>
+
+      <!-- VIEW 2: SOURCES & SCRAPERS VIEW -->
+      <div id="sources-view" class="hidden">
+        <div class="google-card p-6 mb-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+            <div>
+              <h3 class="text-base font-bold text-gray-900">Otomatik Veri Kaynakları & Scraper Listesi</h3>
+              <p class="text-xs text-gray-500 mt-0.5">Sistemin asenkron olarak taradığı kamu ve uluslararası hibe veritabanları</p>
+            </div>
+            <button id="btn-add-source" class="px-3.5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition flex items-center gap-1.5 shadow-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+              </svg>
+              Yeni Kaynak Ekle
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 text-left">
+              <thead>
+                <tr class="bg-gray-50/70 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                  <th class="px-6 py-3">Kurum & Kaynak Adı</th>
+                  <th class="px-6 py-3">Hedef URL</th>
+                  <th class="px-6 py-3">Durum</th>
+                  <th class="px-6 py-3">Son Tarama</th>
+                  <th class="px-6 py-3">Aktif Çağrı</th>
+                  <th class="px-6 py-3 text-right">İşlem</th>
+                </tr>
+              </thead>
+              <tbody id="sources-table-body" class="divide-y divide-gray-100 bg-white">
+                <!-- Dynamically Rendered by js/app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 3: DSHD REPORTS VIEW -->
+      <div id="dshd-view" class="hidden">
+        <div class="mb-4">
+          <p class="text-xs text-gray-600">
+            DSHD (Değerlendirme ve Süreç Haritası Departmanı), her hibe için bürokrasi risklerini, ziraat odası uyarılarını ve aşamalı takvimi tek bir standart denetim raporunda sunar.
+          </p>
+        </div>
+        <div id="dshd-list-container" class="space-y-4">
+          <!-- Dynamically Rendered by js/app.js -->
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- SLIDE-OVER DRAWER: AI GRANT CONSULTANT -->
+  <div id="ai-drawer-backdrop" class="drawer-backdrop fixed inset-0 bg-black/40 z-40"></div>
+  <aside id="ai-drawer" class="slide-drawer fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] lg:w-[520px] bg-white shadow-2xl flex flex-col justify-between">
+    
+    <!-- Drawer Header -->
+    <div class="p-4 border-b border-gray-200 bg-white flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-gray-900 leading-tight">AgroGrant AI Danışmanı</h3>
+          <span id="ai-current-grant-badge" class="text-[11px] text-gray-500 font-medium truncate block max-w-[280px]">
+            Genel Danışmanlık
+          </span>
+        </div>
+      </div>
+      <button id="btn-close-ai-drawer" class="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Chat Messages Scroll Area -->
+    <div id="ai-chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#f8f9fa]">
+      <!-- Chat bubbles inserted here by js/app.js -->
+    </div>
+
+    <!-- Quick Prompts Bar -->
+    <div id="ai-quick-prompts" class="px-4 py-2 border-t border-gray-100 bg-white flex items-center gap-1.5 overflow-x-auto whitespace-nowrap">
+      <button data-prompt="Bu hibe çağrısını köy kahvesi diliyle en sade şekilde açıklar mısın?" class="px-2.5 py-1 text-[11px] rounded-full bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">
+        🚜 Köy Kahvesi Diliyle Anlat
+      </button>
+      <button data-prompt="Bu hibe için gerekli evrak kontrol listesi nedir ve nereden alınır?" class="px-2.5 py-1 text-[11px] rounded-full bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">
+        📋 Evrak Kontrol Listesi
+      </button>
+      <button data-prompt="Bu hibeye en yüksek puanı alacak bir proje taslağı ve harcama kalemleri önerir misin?" class="px-2.5 py-1 text-[11px] rounded-full bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">
+        💡 Proje Taslağı Öner
+      </button>
+    </div>
+
+    <!-- Chat Input Form -->
+    <div class="p-3 border-t border-gray-200 bg-white">
+      <div class="flex items-center gap-2">
+        <textarea 
+          id="ai-chat-input" 
+          rows="1" 
+          placeholder="Hibe hakkında bir soru sorun (Örn: ÇKS olmadan başvuru yapılabilir mi?)..." 
+          class="flex-1 px-3 py-2 text-xs bg-gray-100 focus:bg-white border border-transparent focus:border-blue-500 rounded-lg resize-none focus:outline-none"></textarea>
+        <button 
+          id="btn-send-ai-chat" 
+          class="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition shadow-sm flex-shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+          </svg>
+        </button>
+      </div>
+      <p class="text-[10px] text-gray-400 mt-1.5 text-center">
+        Model-Agnostic Altyapı: Gemini 2.5 Pro, LiteLLM veya Yerel Ollama ile tam uyumlu.
+      </p>
+    </div>
+  </aside>
+
+  <!-- MODAL: DSHD REPORT DETAILS -->
+  <div id="dshd-modal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+    <div class="modal-container bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+      
+      <!-- Modal Header -->
+      <div class="p-5 border-b border-gray-200 flex items-start justify-between bg-purple-50/50">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800">DSHD RAPORU</span>
+            <span id="dshd-modal-agency" class="text-xs text-gray-500 font-medium">TKDK / IPARD</span>
+          </div>
+          <h3 id="dshd-modal-title" class="text-base font-bold text-gray-900 leading-snug">
+            Hibe Başlığı
+          </h3>
+        </div>
+        <button id="btn-close-dshd-modal" class="p-1 text-gray-400 hover:text-gray-700 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="flex-1 overflow-y-auto p-5 space-y-5 text-xs">
+        
+        <!-- Key Metrics Cards -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="p-3 rounded-xl bg-gray-50 border border-gray-200">
+            <span class="block text-[10px] text-gray-500 font-medium">Bürokrasi ve Uygunluk Skoru</span>
+            <span id="dshd-modal-score" class="text-lg font-bold text-gray-900">7.8 / 10</span>
+          </div>
+          <div class="p-3 rounded-xl bg-gray-50 border border-gray-200">
+            <span class="block text-[10px] text-gray-500 font-medium">Şartname Risk Seviyesi</span>
+            <span id="dshd-modal-risk" class="inline-block mt-0.5 font-semibold text-xs">Orta Risk</span>
+          </div>
+        </div>
+
+        <!-- Section 1: Legal Watchpoints -->
+        <div>
+          <h4 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+            Hukuki ve Şartname Riskleri (Gizli Maddeler)
+          </h4>
+          <ul id="dshd-modal-legals" class="space-y-2 bg-amber-50/40 p-3.5 rounded-xl border border-amber-100">
+            <!-- List elements injected via JS -->
+          </ul>
+        </div>
+
+        <!-- Section 2: Farmer Union Warnings -->
+        <div>
+          <h4 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+            Ziraat Odaları & Sektör Uyarıları
+          </h4>
+          <ul id="dshd-modal-warnings" class="space-y-2 bg-blue-50/40 p-3.5 rounded-xl border border-blue-100">
+            <!-- List elements injected via JS -->
+          </ul>
+        </div>
+
+        <!-- Section 3: Timeline & Process Map -->
+        <div>
+          <h4 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+            Süreç Haritası & Kronoloji
+          </h4>
+          <div id="dshd-modal-timeline" class="space-y-2">
+            <!-- Steps injected via JS -->
+          </div>
+        </div>
+
+        <!-- Section 4: Verified Links -->
+        <div>
+          <h4 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">Doğrulanmış Resmî Kaynaklar</h4>
+          <div id="dshd-modal-links" class="flex flex-wrap gap-2">
+            <!-- Links injected via JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
+        <span class="text-[11px] text-gray-500">Bu rapor yapay zeka ve kamu tebliğleri çapraz incelemesiyle oluşturulmuştur.</span>
+        <button id="btn-dshd-ask-ai" class="px-3.5 py-1.5 text-xs font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition shadow-sm flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+          </svg>
+          Danışmana Bu Raporu Sor
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: SETTINGS & AI CONFIG -->
+  <div id="settings-modal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+    <div class="modal-container bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+      
+      <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+        <h3 class="text-sm font-bold text-gray-900">Yapay Zeka ve Sistem Yapılandırması</h3>
+        <button id="btn-close-settings" class="p-1 text-gray-400 hover:text-gray-700 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-4 text-xs">
+        <div>
+          <label class="block font-semibold text-gray-700 mb-1">AI Sağlayıcısı (Provider)</label>
+          <select id="setting-provider" class="w-full p-2 rounded-lg border border-gray-300 bg-white text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <option value="mock">Simülatör / Mock AI (Sıfır Maliyet, API Key Gerekmez)</option>
+            <option value="gemini">Google Gemini (Gemini 2.5 Pro / Flash)</option>
+            <option value="openai">OpenRouter / LiteLLM / OpenAI REST</option>
+            <option value="ollama">Ollama (Yerel & Çevrimdışı Açık Kaynak)</option>
+          </select>
+        </div>
+
+        <div id="api-key-group" class="hidden">
+          <label class="block font-semibold text-gray-700 mb-1">API Anahtarı (API Key)</label>
+          <input id="setting-api-key" type="password" placeholder="AIzaSy... veya sk-or-..." class="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs">
+          <p class="text-[10px] text-gray-400 mt-1">Anahtarınız yalnızca tarayıcınızın yerel depolama (localStorage) alanında tutulur.</p>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-gray-700 mb-1">Model Adı (Opsiyonel)</label>
+          <input id="setting-model" type="text" placeholder="gemini-2.5-flash veya deepseek-r1" class="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs">
+        </div>
+
+        <div id="base-url-group" class="hidden">
+          <label class="block font-semibold text-gray-700 mb-1">Uç Nokta / Base URL (Ollama / LiteLLM için)</label>
+          <input id="setting-base-url" type="text" placeholder="http://localhost:11434 veya https://openrouter.ai/api/v1" class="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs">
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-gray-200 bg-gray-50 flex justify-end gap-2">
+        <button id="btn-save-settings" class="px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition shadow-sm">
+          Ayarları Kaydet
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: ADD NEW SOURCE -->
+  <div id="add-source-modal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+    <div class="modal-container bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+      <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+        <h3 class="text-sm font-bold text-gray-900">Yeni Tarama Kaynağı Ekle</h3>
+        <button id="btn-close-add-source" class="p-1 text-gray-400 hover:text-gray-700 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="p-5 space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-gray-700 mb-1">Kaynak Adı</label>
+          <input id="new-source-name" type="text" placeholder="Örn: KOSGEB KOBİGEL Tarım Çağrıları" class="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block font-semibold text-gray-700 mb-1">Hedef Web Adresi (URL)</label>
+          <input id="new-source-url" type="url" placeholder="https://..." class="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block font-semibold text-gray-700 mb-1">Kaynak Türü</label>
+          <select id="new-source-type" class="w-full p-2 rounded-lg border border-gray-300 bg-white">
+            <option value="Kamu Portalı">Kamu Portalı</option>
+            <option value="Uluslararası Fon">Uluslararası Fon</option>
+            <option value="Kalkınma Ajansı">Kalkınma Ajansı</option>
+            <option value="Sivil Toplum / Vakıf">Sivil Toplum / Vakıf</option>
+          </select>
+        </div>
+      </div>
+      <div class="p-4 border-t border-gray-200 bg-gray-50 flex justify-end gap-2">
+        <button id="btn-save-source" class="px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition shadow-sm">
+          Kaydet ve Takibe Al
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION JAVASCRIPT FILES (Decoupled Architecture) -->
+  <script src="js/ai-adapter.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
